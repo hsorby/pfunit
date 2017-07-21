@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
-
-SET (CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/mod)
 
 find_package(PythonInterp REQUIRED) #Sets ${PYTHON_EXECUTABLE}
 
@@ -22,7 +19,7 @@ execute_process(
    OUTPUT_VARIABLE generated_sources_output
 )
 
-message( "Including generated files '${generated_sources_output}'." )
+message(STATUS "Including generated files '${generated_sources_output}'." )
 include( ${CMAKE_CURRENT_BINARY_DIR}/${generated_sources_output} )
 
 #
@@ -90,8 +87,12 @@ set(SOURCES ${srcs})
 
 add_library(pfunit STATIC ${SOURCES})
 
-include_directories(${CMAKE_BINARY_DIR}/mod)
-include_directories(${CMAKE_BINARY_DIR}/source)
+set(MODULES_DIR "${CMAKE_CURRENT_BINARY_DIR}/Modules")
+set_target_properties(pfunit PROPERTIES
+    Fortran_MODULE_DIRECTORY "${MODULES_DIR}")
+target_include_directories(pfunit PUBLIC
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "${MODULES_DIR}")
 
-INSTALL(TARGETS pfunit DESTINATION lib)
-INSTALL(DIRECTORY  ${CMAKE_BINARY_DIR}/mod DESTINATION .)
+install(TARGETS pfunit DESTINATION lib)
+install(DIRECTORY "${MODULES_DIR}" DESTINATION .)

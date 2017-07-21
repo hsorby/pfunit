@@ -7,18 +7,24 @@ import re
 # from parseBrackets import parseBrackets
 from parseDirectiveArgs import parseDirectiveArguments
 
+
 class MyError(Exception):
+
     def __init__(self, value):
         self.value = value
+
     def __str__(self):
         return repr(self.value)
+
 
 assertVariants = 'Fail|Equal|True|False|LessThan|LessThanOrEqual|GreaterThan|GreaterThanOrEqual'
 assertVariants += '|IsMemberOf|Contains|Any|All|NotAll|None|IsPermutationOf'
 assertVariants += '|ExceptionRaised|SameShape|IsNaN|IsFinite'
 
+
 def cppSetLineAndFile(line, file):
     return "#line " + str(line) + ' "' + file + '"\n'
+
 
 def getSubroutineName(line):
     try:
@@ -27,12 +33,12 @@ def getSubroutineName(line):
     except:
         raise MyError('Improper format in declaration of test procedure.')
 
+
 def parseArgsFirstRest(directiveName,line):
     """If the @-directive has more than one argument, parse into first and rest strings.
     Added for assertAssociated.
     """
 
-    argStr = ''; 
     if directiveName != '':
         m = re.match('\s*'+directiveName+'\s*\\((.*\w.*)\\)\s*$',line,re.IGNORECASE)
         if m:
@@ -82,17 +88,19 @@ def getSelfObjectName(line):
     else:
         return m
 
+
 def getTypeName(line):
     m = re.match('\s*type(.*::\s*|\s+)(\w*)\s*$', line, re.IGNORECASE)
     return m.groups()[1]
- 
+
+
 class Action():
     def apply(self, line):
         m = self.match(line)
         if m: self.action(m, line)
         return m
 
-#------------------
+
 class AtTest(Action):
     def __init__(self, parser):
         self.parser = parser
@@ -155,12 +163,12 @@ class AtTest(Action):
         self.parser.outputFile.write(nextLine)
 
 
-#------------------
 # deprecated - should now just use @test
 class AtMpiTest(AtTest):
     def __init__(self, parser):
         self.parser = parser
         self.keyword = '@mpitest'
+
 
 class AtTestCase(Action):
     def __init__(self, parser):
@@ -250,6 +258,7 @@ class AtAssert(Action):
         p.outputFile.write(" )\n")
         p.outputFile.write("  if (anyExceptions()) return\n")
         p.outputFile.write(cppSetLineAndFile(p.currentLineNumber+1, p.fileName))
+
 
 class AtAssertAssociated(Action):
     def __init__(self,parser):
@@ -478,6 +487,7 @@ class AtMpiAssert(Action):
             p.outputFile.write("  if (anyExceptions("+p.currentSelfObjectName+"%context)) return\n")
         p.outputFile.write(cppSetLineAndFile(p.currentLineNumber+1, p.fileName))
 
+
 class AtBefore(Action):
     def __init__(self, parser):
         self.parser = parser
@@ -492,6 +502,7 @@ class AtBefore(Action):
         self.parser.commentLine(line)
         self.parser.outputFile.write(nextLine)
 
+
 class AtAfter(Action):
     def __init__(self, parser):
         self.parser = parser
@@ -505,6 +516,7 @@ class AtAfter(Action):
         self.parser.userTestCase['tearDown'] = getSubroutineName(nextLine)
         self.parser.commentLine(line)
         self.parser.outputFile.write(nextLine)
+
 
 class AtTestParameter(Action):
     def __init__(self, parser):
@@ -805,8 +817,6 @@ class Parser():
             if 'cases' in locals() or 'testParameters' in locals():
                 self.outputFile.write('   end do\n')
 
-                
-
     def printMakeCustomTest(self, isMpiTestCase):
         args = 'methodName, testMethod'
         declareArgs =  '#ifdef INTEL_13\n'
@@ -845,12 +855,10 @@ class Parser():
 
         if 'testParameterType' in self.userTestCase:
             self.outputFile.write('      call aTest%setTestParameter(testParameter)\n')
-        
 
         self.outputFile.write('   end function makeCustomTest\n')
 
     def makeWrapperModule(self):
-        #-----------------------------------------------------------
         # ! Start here
         self.printHeader()
 

@@ -1,8 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
-
-include_directories (${pFUnit_SOURCE_DIR}/include)
-#include_directories (${pFUnit_BINARY_DIR}/source)
-include_directories(${CMAKE_BINARY_DIR}/mod)
 
 configure_file( junit-4.xsd junit-4.xsd COPYONLY )
 

@@ -12,58 +12,33 @@
 #   cmake -DMPI=YES <path to source>
 #
 # ------------------------------------------------------------------------ #
-INCLUDE(CMakeForceCompiler)
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.3)
 cmake_policy(SET CMP0048 NEW)
 project (pFUnit
     VERSION 3.1.1
     LANGUAGES Fortran)
-#enable_language (Fortran)
 
-# MESSAGE(ENV{PFUNIT}:"$ENV{PFUNIT}") 
-# set (ENV_PFUNIT "$ENV{PFUNIT}")
-# MESSAGE(OK:"${ENV_PFUNIT}") 
-# OPTION(INSTALL_PATH "Use PFUNIT for development" "$ENV{PFUNIT}")  
-# OPTION(INSTALL_PATH "Use PFUNIT for development" "${ENV_PFUNIT}")  
-OPTION(INSTALL_PATH "Use PFUNIT for development" OFF) 
-IF(NOT INSTALL_PATH)
-   IF(DEFINED ENV{PFUNIT})
-      set (INSTALL_PATH "$ENV{PFUNIT}")
-   ELSE()
-      MESSAGE("** WARNING: Install path not found! Please set PFUNIT or use -DINSTALL_PATH=...")
-   ENDIF()
-ENDIF()
-IF(NOT DEFINED ENV{PFUNIT})
-   MESSAGE("++ Remember to set the environment variable PFUNIT to the install directory!")
-   MESSAGE("++ Example: export PFUNIT=${INSTALL_PATH}")
-ENDIF()
-IF( NOT $ENV{PFUNIT} STREQUAL INSTALL_PATH )
-   MESSAGE("** WARNING:  Environment variable PFUNIT not equal to INSTALL_PATH.")
-   MESSAGE("**           Found: PFUNIT=$ENV{PFUNIT}")
-ENDIF()
-MESSAGE("-- Installing to INSTALL_PATH: ${INSTALL_PATH}")
-
-OPTION(MAX_RANK "Maximum array rank for generated code." NO)
-IF(NOT MAX_RANK)
+option(MAX_RANK "Maximum array rank for generated code." NO)
+if (NOT MAX_RANK)
    # Remove PFUNIT_MAX_RANK in version 4.
-   IF(DEFINED ENV{PFUNIT_MAX_RANK})
-      SET (MAX_RANK "$ENV{PFUNIT_MAX_RANK}")
+   if (DEFINED ENV{PFUNIT_MAX_RANK})
+      set(MAX_RANK "$ENV{PFUNIT_MAX_RANK}")
    # Promote following to primary in version 4.
-   ELSEIF(DEFINED ENV{PFUNIT_MAX_ARRAY_RANK})
-      SET (MAX_RANK "$ENV{PFUNIT_MAX_ARRAY_RANK}")
-   ELSE()
-      SET (MAX_RANK 5)
-   ENDIF()
-ENDIF()
+   elseif (DEFINED ENV{PFUNIT_MAX_ARRAY_RANK})
+      set(MAX_RANK "$ENV{PFUNIT_MAX_ARRAY_RANK}")
+   else ()
+      set(MAX_RANK 5)
+   endif ()
+endif ()
 
 
-OPTION(MPI "Use MPI for parallel runs" NO)
-OPTION(FIND_MPI "Attempt to automatically find MPI information" YES)
-OPTION(MPI_USE_MPIEXEC "Use CMake's FindMPI to find mpiexec" NO)
-OPTION(OPENMP "Use OPENMP for parallel runs" NO)
+option(MPI "Use MPI for parallel runs" NO)
+option(FIND_MPI "Attempt to automatically find MPI information" YES)
+option(MPI_USE_MPIEXEC "Use CMake's FindMPI to find mpiexec" NO)
+option(OPENMP "Use OPENMP for parallel runs" NO)
 
 # The following sets robust to "ON".
-OPTION(ROBUST "Build robust test runner" YES)
+option(ROBUST "Build robust test runner" YES)
 
 # If the user specifies this on the command line (or equivalently, in the
 # CMake cache), we take them at their word and do not attempt any kind of
@@ -93,33 +68,33 @@ endif()
 
 if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
 
-if (UNIX)
-   execute_process (COMMAND ifort --version 
-		    OUTPUT_VARIABLE INTEL_COMPILER_VERSION)
-			   string (REGEX MATCH "([0-9]+)" 
-                    NUM_VERSION ${INTEL_COMPILER_VERSION})
-  if ("${NUM_VERSION}" STREQUAL "13")
-        add_definitions(-DINTEL_13)
-  endif ()
-  if ("${NUM_VERSION}" STREQUAL "16")
-        add_definitions(-DINTEL_16)
-  endif ()
-endif ()
+    if (UNIX)
+       execute_process(COMMAND ifort --version
+                        OUTPUT_VARIABLE INTEL_COMPILER_VERSION)
+                               string (REGEX MATCH "([0-9]+)"
+                        NUM_VERSION ${INTEL_COMPILER_VERSION})
+      if ("${NUM_VERSION}" STREQUAL "13")
+            add_definitions(-DINTEL_13)
+      endif ()
+      if ("${NUM_VERSION}" STREQUAL "16")
+            add_definitions(-DINTEL_16)
+      endif ()
+    endif ()
 
     #Use ifort
     #There seems to be no easy way to determine the compiler version on Windows
     #since it isn't necessary defined in the PATH. As a workaround, assume version
     #different to 13 if exectuing ifort doesn't give any results
-    if(NOT "${INTEL_COMPILER_VERSION}" STREQUAL "")
+    if (NOT "${INTEL_COMPILER_VERSION}" STREQUAL "")
       string (REGEX MATCH "([0-9]+)"
               NUM_VERSION ${INTEL_COMPILER_VERSION})
-      if("${NUM_VERSION}" STREQUAL "13")
+      if ("${NUM_VERSION}" STREQUAL "13")
           add_definitions(-DINTEL_13)
-      endif()
-      if("${NUM_VERSION}" STREQUAL "16")
+      endif ()
+      if ("${NUM_VERSION}" STREQUAL "16")
           add_definitions(-DINTEL_16)
-      endif()
-    endif()
+      endif ()
+    endif ()
 
     add_definitions(-DIntel)
     if (WIN32)
@@ -188,7 +163,7 @@ set(CMAKE_SHARED_LIBRARY_LINK_Fortran_FLAGS "")
 set(CMAKE_SKIP_RPATH ON)
 
 add_subdirectory (source)
-add_subdirectory (tests)
+# add_subdirectory (tests)
 add_subdirectory (include)
 add_subdirectory (bin)
 
