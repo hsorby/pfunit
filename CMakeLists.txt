@@ -176,6 +176,9 @@ configure_file(cmake/pFUnitConfig.cmake.in
 configure_file(cmake/pFUnitConfigVersion.cmake.in
   "${PROJECT_BINARY_DIR}/pFUnitConfigVersion.cmake" @ONLY)
 
+# Include the config file so we can use the test creation function directly.
+include("${PROJECT_BINARY_DIR}/pFUnitConfig.cmake")
+
 # Install the pFUnitConfig.cmake and pFUnitConfigVersion.cmake
 install(FILES
   "${PROJECT_BINARY_DIR}/pFUnitConfig.cmake"
