@@ -17,10 +17,9 @@ set (PFUNIT_LINK_DIRS ${CMAKE_CURRENT_LIST_DIR}/lib)
 find_library (PFUNIT_LIBRARIES pfunit
     PATHS ${CMAKE_CURRENT_LIST_DIR}/lib
     NO_DEFAULT_PATH)
-set (PFUNIT_PARSER "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_LIST_DIR}/bin/pFUnitParser.py")
-set (PFUNIT_DRIVER "${CMAKE_CURRENT_LIST_DIR}/include/driver.F90")
-set (PFUNIT_TESTUTILS "${CMAKE_CURRENT_LIST_DIR}/include/TestUtil.F90")
-
+set(PFUNIT_PARSER "${PYTHON_EXECUTABLE}" "@CMAKE_CURRENT_LIST_DIR@/bin/pFUnitParser.py")
+set(PFUNIT_DRIVER "@CMAKE_CURRENT_LIST_DIR@/include/driver.F90")
+set(PFUNIT_TESTUTILS "@CMAKE_CURRENT_LIST_DIR@/include/TestUtil.F90")
 
 # Function     : add_pfunit_test 
 #
@@ -117,8 +116,8 @@ function (add_pfunit_test test_package_name test_sources extra_sources extra_sou
     endif ()
     
     # Define dependencies
-    target_link_libraries (${test_package_name} ${PFUNIT_LIBRARIES})
-    target_include_directories (${test_package_name} PRIVATE ${PFUNIT_INCLUDE_DIRS})
+    target_link_libraries (${test_package_name} pfunit)
+    #target_include_directories (${test_package_name} PRIVATE ${PFUNIT_INCLUDE_DIRS})
     target_include_directories (${test_package_name} PRIVATE ${SRC_GEN_DIR})
     target_include_directories (${test_package_name} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include/${test_package_name})
 
